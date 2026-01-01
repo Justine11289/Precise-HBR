@@ -1,0 +1,37 @@
+Provider: Silverchair
+Database: AmericanMedicalAssociation
+Content: text/plain; charset="UTF-8"
+
+TY  - JOUR
+AU  - Urban, Philip
+AU  - Gregson, John
+AU  - Owen, Ruth
+AU  - Mehran, Roxana
+AU  - Windecker, Stephan
+AU  - Valgimigli, Marco
+AU  - Varenne, Olivier
+AU  - Krucoff, Mitchell
+AU  - Saito, Shigeru
+AU  - Baber, Usman
+AU  - Chevalier, Bernard
+AU  - Capodanno, Davide
+AU  - Morice, Marie-Claude
+AU  - Pocock, Stuart
+T1  - Assessing the Risks of Bleeding vs Thrombotic Events in Patients at High Bleeding Risk After Coronary Stent Implantation: The ARC–High Bleeding Risk Trade-off Model
+PY  - 2021
+Y1  - 2021/04/01
+DO  - 10.1001/jamacardio.2020.6814
+JO  - JAMA Cardiology
+JA  - JAMA Cardiol
+VL  - 6
+IS  - 4
+SP  - 410
+EP  - 419
+SN  - 2380-6583
+AB  - Patients who are candidates for percutaneous coronary intervention (PCI) and are at high bleeding risk constitute a therapeutic challenge because they often also face an increased risk of thrombotic complications.To develop and validate models to predict the risks of major bleeding (Bleeding Academic Research Consortium [BARC] types 3 to 5 bleeding) and myocardial infarction (MI) and/or stent thrombosis (ST) for individual patients at high bleeding risk and provide assistance in defining procedural strategy and antithrombotic regimens.This prognostic study used individual patient data from 6 studies conducted from July 1, 2009, to September 5, 2017, for 6641 patients at more than 200 centers in Europe, the US, and Asia who underwent PCI and were identified as being at high bleeding risk using the Academic Research Consortium criteria. In 1 year of follow-up (excluding periprocedural events), individual patient risks of MI and/or ST and major bleeding were evaluated using 33 baseline variables. To validate these models, a subgroup of 1458 patients at high bleeding risk from the ONYX ONE trial were analyzed. Statistical analysis was performed from February 1, 2019, to April 30, 2020.All patients underwent PCI with bare metal, drug-coated, or drug-eluting stent implants.Forward, stepwise multivariable proportional hazards models were used to identify highly significant predictors of MI and/or ST and BARC types 3 to 5 bleeding.A total of 6641 patients (4384 men [66.0%]; median age, 77.9 years [interquartile range, 70.0-82.6 years]) were included in this study. Over 365 days, nonperiprocedural MI and/or ST occurred in 350 patients (5.3%), and BARC types 3 to 5 bleeding occurred in 381 patients (5.7%). Eight independent baseline predictors of risk of MI and/or ST and 8 predictors for risk of BARC types 3 to 5 bleeding were identified. Four of these predictors were in both risk models. Both risk models showed moderate discrimination: C statistic = 0.69 for predicting MI and/or ST and 0.68 for predicting BARC types 3 to 5 bleeding. Applying these same models to the validation cohort gave a similar strength of discrimination (C statistic = 0.74 for both MI and/or ST and BARC types 3-5 bleeding). Patients with MI and/or ST had a mortality hazard ratio of 6.1 (95% CI, 4.8-7.7), and those with BARC types 3 to 5 bleeding had a mortality hazard ratio of 3.7 (95% CI, 2.9-4.8) compared with patients free of both events. Taking these data into account, the risk scores facilitate investigation of the individual patient trade-off between these 2 risks: 2931 patients (44.1%) at high bleeding risk in the 6 studies had a greater risk of MI and/or ST than of BARC 3 to 5 bleeding, 1555 patients (23.4%) had a greater risk of BARC 3 to 5 bleeding than of MI and/or ST, and 2155 (32.4%) had a comparable risk of both events.In a large cohort of patients at high bleeding risk undergoing PCI, 2 prognostic models have been developed to identify individual patients’ risk of major coronary thrombotic and bleeding events. In future clinical practice, using an application on a smartphone to evaluate the trade-off between these 2 quantifiable risks for each patient may help clinicians choose the most appropriate revascularization strategy and tailor the duration and intensity of antithrombotic regimens.
+Y2  - 10/18/2025
+UR  - https://doi.org/10.1001/jamacardio.2020.6814
+ER  - 
+
+
+

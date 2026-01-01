@@ -1,0 +1,210 @@
+# This file specifies files that are *not* uploaded to Google Cloud
+# using gcloud. It follows the same syntax as .gitignore, with the addition of
+# "#!include" directives (which insert the entries of the given .gitignore-style
+# file at that point).
+#
+# For more information, run:
+#   $ gcloud topic gcloudignore
+#
+.gcloudignore
+# If you would like to upload your .git directory, .gitignore file or files
+# from your .gitignore file, remove the corresponding line
+# below:
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# celery beat schedule file
+celerybeat-schedule
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Project specific
+node_modules/
+.git/
+README.md
+LICENSE
+*.md
+test_*.py
+tests/
+
+# Python pycache:
+*.pyc
+*.pyo
+*.pyd
+*.py.class
+
+# Testing and development files
+*_test.py
+quick_test.py
+simple_test.py
+run_tests.py
+test_config.json
+TEST_README.md
+RUN_TESTS_GUIDE.md
+
+# Documentation and guides (可選)
+!SMART_LU_DEPLOYMENT_GUIDE.md
+
+# Environment files
+cerner_sandbox.env
+production.env.template
+
+# Temporary files
+*.tmp
+*.temp
+/tmp/
+versions_to_delete.txt
+
+# Performance and optimization files
+fhir_performance_optimizer.py
+performance_test_report.json
+test_performance_optimizer.py
+
+# Build artifacts
+*.egg-info/
+
+# IDE files
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/
+
+# Docker files (如果不使用 Docker)
+Dockerfile
+.dockerignore
+
+# Backup files
+*.bak
+*.backup
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# FHIR value sets - INCLUDE THESE (they are required for ARC-HBR calculations)
+# *_valueset.json  # COMMENTED OUT - these files are needed!
+
+# Example files that can be excluded
+example_snomed_valueset.json
+
+# CDS services config - INCLUDE THIS (needed for CDS Hooks)
+# cds-services.json  # COMMENTED OUT - this file is needed!
+
+# Test files that can be excluded
+smart_health_test_*.json

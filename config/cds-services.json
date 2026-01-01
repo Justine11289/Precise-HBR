@@ -1,0 +1,34 @@
+{
+  "services": [
+    {
+      "hook": "medication-prescribe",
+      "id": "precise_hbr_bleeding_risk_alert",
+      "title": "PRECISE-HBR High Bleeding Risk Alert",
+      "description": "Alert for patients undergoing PCI with high bleeding risk (PRECISE-HBR >= 23) requiring DAPT optimization",
+      "prefetch": {
+        "patient": "Patient/{{context.patientId}}",
+        "medications": "MedicationRequest?patient={{context.patientId}}&status=active&_count=50",
+        "hemoglobin": "Observation?patient={{context.patientId}}&code=718-7&_sort=-date&_count=1",
+        "creatinine": "Observation?patient={{context.patientId}}&code=2160-0&_sort=-date&_count=1", 
+        "egfr": "Observation?patient={{context.patientId}}&code=33914-3&_sort=-date&_count=1",
+        "wbc": "Observation?patient={{context.patientId}}&code=26515-7&_sort=-date&_count=1",
+        "conditions": "Condition?patient={{context.patientId}}&_count=100"
+      }
+    },
+    {
+      "hook": "patient-view",
+      "id": "precise_hbr_patient_view",
+      "title": "PRECISE-HBR Bleeding Risk Assessment - Patient View",
+      "description": "Display PRECISE-HBR bleeding risk assessment for PCI patients in patient view",
+      "prefetch": {
+        "patient": "Patient/{{context.patientId}}",
+        "medications": "MedicationRequest?patient={{context.patientId}}&status=active&_count=50",
+        "hemoglobin": "Observation?patient={{context.patientId}}&code=718-7&_sort=-date&_count=1",
+        "creatinine": "Observation?patient={{context.patientId}}&code=2160-0&_sort=-date&_count=1", 
+        "egfr": "Observation?patient={{context.patientId}}&code=33914-3&_sort=-date&_count=1",
+        "wbc": "Observation?patient={{context.patientId}}&code=26515-7&_sort=-date&_count=1",
+        "conditions": "Condition?patient={{context.patientId}}&_count=100"
+      }
+    }
+  ]
+}

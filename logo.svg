@@ -1,0 +1,50 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+    <!-- Main Background Circle -->
+    <circle cx="128" cy="128" r="118" fill="#f0f9ff" stroke="#2563eb" stroke-width="4"/>
+    
+    <!-- Risk Assessment Gauge -->
+    <path d="M 50 128 A 78 78 0 0 1 206 128" 
+          fill="none" 
+          stroke-width="12" 
+          stroke="url(#riskGradient)" 
+          stroke-linecap="round"/>
+    
+    <!-- Risk Level Indicators -->
+    <circle cx="65" cy="145" r="5" fill="#10b981"/> <!-- Low Risk -->
+    <circle cx="128" cy="55" r="5" fill="#f59e0b"/> <!-- Medium Risk -->
+    <circle cx="191" cy="145" r="5" fill="#ef4444"/> <!-- High Risk -->
+    
+    <!-- Medical Heart Symbol -->
+    <path d="M128 85 C118 75, 100 75, 100 92 C100 108, 128 135, 128 135 C128 135, 156 108, 156 92 C156 75, 138 75, 128 85 Z" 
+          fill="#dc2626" 
+          stroke="#b91c1c" 
+          stroke-width="2"/>
+    
+    <!-- FHIR Data Elements -->
+    <rect x="110" y="150" width="36" height="4" fill="#3b82f6" rx="2"/>
+    <rect x="110" y="158" width="28" height="4" fill="#3b82f6" rx="2"/>
+    <rect x="110" y="166" width="32" height="4" fill="#3b82f6" rx="2"/>
+    <rect x="110" y="174" width="24" height="4" fill="#3b82f6" rx="2"/>
+    
+    <!-- FHIR Integration Symbol -->
+    <polygon points="90,190 105,185 105,195" fill="#0ea5e9"/>
+    <rect x="107" y="187" width="20" height="6" fill="#0ea5e9" rx="1"/>
+    <polygon points="129,185 144,190 129,195" fill="#0ea5e9"/>
+    
+    <!-- App Title -->
+    <text x="128" y="215" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#1e40af">
+        PRECISE-HBR
+    </text>
+    <text x="128" y="235" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#64748b">
+        Risk Calculator
+    </text>
+    
+    <!-- Gradients -->
+    <defs>
+        <linearGradient id="riskGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#10b981"/>
+            <stop offset="50%" style="stop-color:#f59e0b"/>
+            <stop offset="100%" style="stop-color:#ef4444"/>
+        </linearGradient>
+    </defs>
+</svg> 

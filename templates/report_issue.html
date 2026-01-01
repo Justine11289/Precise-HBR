@@ -1,0 +1,265 @@
+{% extends "layout.html" %}
+
+{% block title %}Report an Issue or Complaint{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- ONC Compliance Notice -->
+            <div class="alert alert-info mb-4">
+                <h5><i class="fas fa-info-circle"></i> ONC Compliance Notice</h5>
+                <p class="mb-0">
+                    <small>
+                        This complaint process is maintained in compliance with
+                        <strong>45 CFR 170.523 (n)</strong> - Complaint Process.
+                        All complaints are reviewed and reported quarterly to the Office of the National Coordinator for
+                        Health IT.
+                    </small>
+                </p>
+            </div>
+
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="fas fa-exclamation-circle"></i> Report an Issue or Complaint</h3>
+                </div>
+                <div class="card-body">
+                    {% if success %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <h5><i class="fas fa-check-circle"></i> Thank you for your feedback!</h5>
+                        <p class="mb-0">Your complaint has been submitted successfully. We will review it and take
+                            appropriate action.</p>
+                        <p class="mb-0 mt-2"><strong>Reference ID:</strong> {{ reference_id }}</p>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <a href="/" class="btn btn-primary"><i class="fas fa-home"></i> Return to Home</a>
+                    {% else %}
+
+                    <p class="lead">We value your feedback and take all concerns seriously.</p>
+                    <p>Please use this form to report:</p>
+                    <ul>
+                        <li>Safety concerns or medical errors</li>
+                        <li>Functionality problems or bugs</li>
+                        <li>Privacy or security issues</li>
+                        <li>Usability or accessibility concerns</li>
+                        <li>Data accuracy issues</li>
+                        <li>General complaints or suggestions</li>
+                    </ul>
+
+                    <hr>
+
+                    <form method="POST" action="{{ url_for('web.submit_complaint') }}" id="complaint-form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+                        <!-- Complainant Type -->
+                        <div class="mb-3">
+                            <label for="complainant_type" class="form-label">
+                                <strong>I am a:</strong> <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="complainant_type" name="complainant_type" required>
+                                <option value="">-- Please Select --</option>
+                                <option value="clinician">Healthcare Provider / Clinician</option>
+                                <option value="patient">Patient or Patient Representative</option>
+                                <option value="administrator">Healthcare Administrator</option>
+                                <option value="developer">Developer or Technical Staff</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <!-- Complaint Category -->
+                        <div class="mb-3">
+                            <label for="category" class="form-label">
+                                <strong>Issue Category:</strong> <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="category" name="category" required>
+                                <option value="">-- Please Select --</option>
+                                <option value="safety">Safety Concern / Medical Error</option>
+                                <option value="functionality">Functionality Problem / Bug</option>
+                                <option value="privacy">Privacy or Security Issue</option>
+                                <option value="usability">Usability / User Experience</option>
+                                <option value="accessibility">Accessibility Issue</option>
+                                <option value="data_accuracy">Data Accuracy / Calculation Error</option>
+                                <option value="performance">Performance / Speed Issue</option>
+                                <option value="documentation">Documentation / Help</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <!-- Severity -->
+                        <div class="mb-3">
+                            <label for="severity" class="form-label">
+                                <strong>Severity:</strong> <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="severity" name="severity" required>
+                                <option value="">-- Please Select --</option>
+                                <option value="critical">Critical - Immediate safety risk or system failure</option>
+                                <option value="high">High - Significant impact on patient care</option>
+                                <option value="medium">Medium - Moderate inconvenience or concern</option>
+                                <option value="low">Low - Minor issue or suggestion</option>
+                            </select>
+                        </div>
+
+                        <!-- Subject -->
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">
+                                <strong>Brief Description:</strong> <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="subject" name="subject" maxlength="200" required
+                                value="{{ prev_data.subject if prev_data else '' }}"
+                                placeholder="Briefly describe the issue (max 200 characters)">
+                            <div class="form-text">Maximum 200 characters</div>
+                        </div>
+
+                        <!-- Detailed Description -->
+                        <div class="mb-3">
+                            <label for="description" class="form-label">
+                                <strong>Detailed Description:</strong> <span class="text-danger">*</span>
+                            </label>
+                            <textarea class="form-control" id="description" name="description" rows="6" required
+                                placeholder="Please provide as much detail as possible, including:
+- What happened?
+- When did it happen?
+- What were you trying to do?
+- What did you expect to happen?
+- Any error messages you saw?">{{ prev_data.description if prev_data else '' }}</textarea>
+                            <div class="form-text">Please be as specific as possible to help us investigate</div>
+                        </div>
+
+                        <!-- Contact Information (Optional) -->
+                        <div class="mb-3">
+                            <label for="contact_email" class="form-label">
+                                <strong>Your Email Address (Optional):</strong>
+                            </label>
+                            <input type="email" class="form-control" id="contact_email" name="contact_email"
+                                value="{{ prev_data.contact_email if prev_data else '' }}"
+                                placeholder="your.email@example.com">
+                            <div class="form-text">
+                                Providing your email allows us to follow up if we need more information.
+                                This is optional but recommended.
+                            </div>
+                        </div>
+
+                        <!-- Security Check -->
+                        <div class="mb-3">
+                            <label for="captcha_answer" class="form-label">
+                                <strong>Security Check:</strong> <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light font-monospace fw-bold">{{ captcha_question
+                                    }}</span>
+                                <input type="number" class="form-control" id="captcha_answer" name="captcha_answer"
+                                    required placeholder="Enter the result of the calculation">
+                            </div>
+                            <div class="form-text">Please solve the math challenge to verify your submission.</div>
+                        </div>
+
+                        <!-- Privacy Notice -->
+                        <div class="alert alert-warning">
+                            <h6><i class="fas fa-shield-alt"></i> Privacy Notice</h6>
+                            <p class="mb-0">
+                                <small>
+                                    Do not include any Protected Health Information (PHI) such as patient names,
+                                    medical record numbers, or specific clinical details in this form.
+                                    If your complaint requires discussion of specific patient cases,
+                                    please contact us through secure channels.
+                                </small>
+                            </p>
+                        </div>
+
+                        <!-- Acknowledgment -->
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="acknowledge" name="acknowledge"
+                                required>
+                            <label class="form-check-label" for="acknowledge">
+                                I acknowledge that I have not included any Protected Health Information (PHI) in this
+                                complaint. <span class="text-danger">*</span>
+                            </label>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane"></i> Submit Complaint
+                            </button>
+                            <a href="/" class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-question-circle"></i> What Happens Next?</h5>
+                </div>
+                <div class="card-body">
+                    <ol>
+                        <li><strong>Acknowledgment:</strong> You will receive a reference ID for tracking purposes.</li>
+                        <li><strong>Review:</strong> Our team will review your complaint within 2-3 business days.</li>
+                        <li><strong>Investigation:</strong> We will investigate the issue and determine appropriate
+                            action.</li>
+                        <li><strong>Response:</strong> If you provided an email, we will contact you with our findings.
+                        </li>
+                        <li><strong>ONC Reporting:</strong> All complaints are summarized and reported quarterly to the
+                            Office of the National Coordinator for Health IT.</li>
+                    </ol>
+                    <p class="mb-0">
+                        <strong>For urgent safety concerns, please contact:</strong><br>
+                        Email: <a href="mailto:aluminum001@gmail.com">aluminum001@gmail.com</a><br>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-label strong {
+        color: #333;
+    }
+
+    .text-danger {
+        color: #dc3545 !important;
+    }
+
+    .card {
+        border-radius: 8px;
+    }
+
+    .card-header {
+        border-radius: 8px 8px 0 0 !important;
+    }
+</style>
+
+<script nonce="{{ csp_nonce() }}">
+    // Character counter for subject field
+    document.getElementById('subject').addEventListener('input', function (e) {
+        const maxLength = 200;
+        const currentLength = e.target.value.length;
+        const remaining = maxLength - currentLength;
+
+        const formText = e.target.nextElementSibling;
+        formText.textContent = `${remaining} characters remaining`;
+
+        if (remaining < 20) {
+            formText.classList.add('text-warning');
+        } else {
+            formText.classList.remove('text-warning');
+        }
+    });
+
+    // Form validation
+    document.getElementById('complaint-form').addEventListener('submit', function (e) {
+        const acknowledge = document.getElementById('acknowledge');
+        if (!acknowledge.checked) {
+            e.preventDefault();
+            alert('Please acknowledge that you have not included any Protected Health Information (PHI) in your complaint.');
+            acknowledge.focus();
+        }
+    });
+</script>
+{% endblock %}

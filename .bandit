@@ -1,0 +1,42 @@
+# Bandit Configuration for PRECISE-HBR
+# https://bandit.readthedocs.io/en/latest/config.html
+
+[bandit]
+# Directories to exclude from scanning
+exclude_dirs = [
+    '.venv',
+    'venv',
+    'env',
+    '__pycache__',
+    '.git',
+    'node_modules',
+    'instance',
+    'load_test_results',
+    'security_reports'
+]
+
+# Tests to skip (if you want to ignore specific security checks)
+# Uncomment and add test IDs to skip them
+# skips = ['B101', 'B601']
+
+# Test IDs to run (leave empty to run all)
+tests = []
+
+# Set confidence level (LOW, MEDIUM, HIGH)
+# Only report issues with confidence level equal to or higher than this
+# confidence = MEDIUM
+
+# Set severity level (LOW, MEDIUM, HIGH)
+# Only report issues with severity level equal to or higher than this
+# severity = MEDIUM
+
+[bandit.formatters]
+# Available formats: txt, html, json, csv, custom
+# Default format if not specified in command line
+# format = txt
+
+[bandit.plugins]
+# Enable/disable specific plugins
+# Example: disable assert_used check
+# assert_used = false
+

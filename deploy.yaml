@@ -1,0 +1,54 @@
+# Google Cloud Platform 部署配置 - SMART-LU 專案
+# PRECISE-HBR SMART on FHIR 應用程式
+
+# 專案信息
+project_id: smart-lu
+service_name: smart-fhir-app
+region: us-central1
+
+# 環境配置
+environments:
+  production:
+    url: https://smart-fhir-app-dot-smart-lu.uc.r.appspot.com
+    client_id: "需要在 EHR 系統註冊後填入"
+    redirect_uri: https://smart-fhir-app-dot-smart-lu.uc.r.appspot.com/callback
+    
+  staging:
+    url: https://staging-smart-fhir-app-dot-smart-lu.uc.r.appspot.com
+    client_id: "測試環境 Client ID"
+    redirect_uri: https://staging-smart-fhir-app-dot-smart-lu.uc.r.appspot.com/callback
+
+# 部署前檢查清單
+pre_deployment_checklist:
+  - 確認 GCP 專案 SMART-LU 已設置
+  - 更新 app.yaml 中的 SMART_CLIENT_ID
+  - 更新 app.yaml 中的 FLASK_SECRET_KEY
+  - 確認 EHR 系統中的 redirect_uri 設置
+  - 驗證 CDSS 配置文件 (cdss_config.json)
+  - 測試 FHIR 連接
+
+# 部署命令
+deployment_commands:
+  # 1. 設置專案
+  set_project: gcloud config set project smart-lu
+  
+  # 2. 部署到 App Engine
+  deploy: gcloud app deploy app.yaml --project=smart-lu --version=v1
+  
+  # 3. 查看部署狀態
+  status: gcloud app versions list --project=smart-lu
+  
+  # 4. 查看日誌
+  logs: gcloud app logs tail --project=smart-lu
+
+# 監控和維護
+monitoring:
+  health_check: https://smart-fhir-app-dot-smart-lu.uc.r.appspot.com/
+  metrics: gcloud app operations list --project=smart-lu
+  
+# 安全配置
+security:
+  - 使用 HTTPS 強制加密
+  - 設置強隨機 FLASK_SECRET_KEY
+  - 限制 CORS 來源
+  - 啟用 App Engine 防火牆規則 

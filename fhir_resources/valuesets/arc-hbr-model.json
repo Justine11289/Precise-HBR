@@ -1,0 +1,153 @@
+{
+  "tradeoffModel": {
+    "name": "ARC-HBR Trade-off Model",
+    "description": "Assessing the Risks of Bleeding vs Thrombotic Events in Patients at High Bleeding Risk After Coronary Stent Implantation",
+    "source": "JAMA Cardiology",
+    "bleedingEvents": {
+      "description": "BARC types 3-5 bleeding events",
+      "cStatistic": 0.68,
+      "predictors": [
+        {
+          "factor": "age_ge_65",
+          "description": "Age ≥ 65 years",
+          "hazardRatio": 1.50,
+          "confidenceInterval": "1.08-2.08",
+          "pValue": 0.01
+        },
+        {
+          "factor": "liver_cancer_surgery",
+          "description": "Liver disease, cancer, or surgery",
+          "hazardRatio": 1.63,
+          "confidenceInterval": "1.27-2.09",
+          "pValue": 0.0001
+        },
+        {
+          "factor": "copd",
+          "description": "Chronic obstructive pulmonary disease (COPD)",
+          "hazardRatio": 1.39,
+          "confidenceInterval": "1.05-1.83",
+          "pValue": 0.02
+        },
+        {
+          "factor": "smoker",
+          "description": "Current smoker",
+          "hazardRatio": 1.47,
+          "confidenceInterval": "1.08-1.99",
+          "pValue": 0.01
+        },
+        {
+          "factor": "hemoglobin_11_12.9",
+          "description": "Hemoglobin 11-12.9 g/dL",
+          "hazardRatio": 1.69,
+          "confidenceInterval": "1.30-2.20",
+          "pValue": 0.001
+        },
+        {
+          "factor": "hemoglobin_lt_11",
+          "description": "Hemoglobin < 11 g/dL",
+          "hazardRatio": 3.99,
+          "confidenceInterval": "3.06-5.20",
+          "pValue": 0.001
+        },
+        {
+          "factor": "egfr_lt_30",
+          "description": "eGFR < 30 mL/min",
+          "hazardRatio": 1.43,
+          "confidenceInterval": "1.04-1.96",
+          "pValue": 0.02
+        },
+        {
+          "factor": "complex_pci",
+          "description": "Complex PCI procedure",
+          "hazardRatio": 1.32,
+          "confidenceInterval": "1.07-1.61",
+          "pValue": 0.008
+        },
+        {
+          "factor": "oac_discharge",
+          "description": "Oral anticoagulants (OAC) at discharge",
+          "hazardRatio": 2.00,
+          "confidenceInterval": "1.62-2.48",
+          "pValue": 0.001
+        }
+      ]
+    },
+    "thromboticEvents": {
+      "description": "Myocardial Infarction (MI) and/or Stent Thrombosis (ST)",
+      "cStatistic": 0.69,
+      "predictors": [
+        {
+          "factor": "diabetes",
+          "description": "Diabetes mellitus",
+          "hazardRatio": 1.56,
+          "confidenceInterval": "1.26-1.93",
+          "pValue": 0.001
+        },
+        {
+          "factor": "prior_mi",
+          "description": "Prior myocardial infarction",
+          "hazardRatio": 1.89,
+          "confidenceInterval": "1.52-2.35",
+          "pValue": 0.001
+        },
+        {
+          "factor": "smoker",
+          "description": "Current smoker",
+          "hazardRatio": 1.48,
+          "confidenceInterval": "1.09-2.01",
+          "pValue": 0.009
+        },
+        {
+          "factor": "nstemi_stemi",
+          "description": "NSTEMI or STEMI",
+          "hazardRatio": 1.82,
+          "confidenceInterval": "1.46-2.25",
+          "pValue": 0.001
+        },
+        {
+          "factor": "hemoglobin_11_12.9",
+          "description": "Hemoglobin 11-12.9 g/dL",
+          "hazardRatio": 1.27,
+          "confidenceInterval": "0.99-1.63",
+          "pValue": 0.005
+        },
+        {
+          "factor": "hemoglobin_lt_11",
+          "description": "Hemoglobin < 11 g/dL",
+          "hazardRatio": 1.50,
+          "confidenceInterval": "1.12-1.99",
+          "pValue": 0.005
+        },
+        {
+          "factor": "egfr_30_59",
+          "description": "eGFR 30-59 mL/min",
+          "hazardRatio": 1.30,
+          "confidenceInterval": "1.03-1.66",
+          "pValue": 0.001
+        },
+        {
+          "factor": "egfr_lt_30",
+          "description": "eGFR < 30 mL/min",
+          "hazardRatio": 1.69,
+          "confidenceInterval": "1.20-2.37",
+          "pValue": 0.001
+        },
+        {
+          "factor": "complex_pci",
+          "description": "Complex PCI procedure",
+          "hazardRatio": 1.50,
+          "confidenceInterval": "1.21-1.85",
+          "pValue": 0.001
+        },
+        {
+          "factor": "bms",
+          "description": "Bare metal stent (BMS) used",
+          "hazardRatio": 1.53,
+          "confidenceInterval": "1.23-1.89",
+          "pValue": 0.001
+        }
+      ]
+    }
+  }
+}
+
