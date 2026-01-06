@@ -46,7 +46,7 @@ def get_secret(env_var: str, default: str = None) -> str:
 
 class Config:
     """Base Configuration"""
-    SECRET_KEY = get_secret('FLASK_SECRET_KEY')
+    SECRET_KEY = get_secret('FLASK_SECRET_KEY') or "default_fallback_key"
     SESSION_TYPE = 'filesystem'
     SESSION_PERMANENT = False
     SESSION_COOKIE_HTTPONLY = True

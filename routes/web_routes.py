@@ -11,9 +11,20 @@ web_bp = Blueprint('web', __name__)
 
 @web_bp.route('/')
 def index():
+    # 1. 偵測是否有沙盒參數
+    iss = request.args.get('iss')
+    launch_id = request.args.get('launch')
+    
+    if iss:
+        # 關鍵：自動把沙盒帶來的參數轉給 launch 路由
+        return redirect(url_for('auth.launch', iss=iss, launch=launch_id))
+    
+    # 2. 如果已經登入成功
     if is_session_valid():
         return redirect(url_for('web.main_page'))
-    return redirect(url_for('web.standalone_launch_page'))
+    
+    # 3. 只有真的什麼都沒有，才顯示這行
+    return "<h1>Precise-HBR 已就緒</h1><p>請從 SMART Launcher (4013) 啟動以進行身分驗證。</p>"
 
 @web_bp.route('/standalone')
 def standalone_launch_page():

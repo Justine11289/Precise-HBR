@@ -360,7 +360,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script nonce="{{ csp_nonce() }}">
+<script>
     // Global variables for feedback system
     let currentFeedbackType = null;
     let currentPatientData = null;
@@ -622,13 +622,13 @@
         document.getElementById('error-container').classList.add('d-none');
 
         try {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            // const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             const response = await fetch('/api/calculate_risk', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-CSRFToken': csrfToken
+                    'Accept': 'application/json'
+                    // 'X-CSRFToken': csrfToken
                 },
                 body: JSON.stringify({ patientId: patientId })
             });
@@ -1558,12 +1558,12 @@
         document.getElementById('submitCommentBtn').innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>Submitting...';
 
         // Submit feedback via AJAX
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        // const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         fetch('/api/feedback', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
+                // 'X-CSRFToken': csrfToken
             },
             body: JSON.stringify(feedbackData)
         })
@@ -1679,12 +1679,12 @@
         console.log('currentPatientData:', currentPatientData);
 
         // Send POST request to export API
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        // const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         fetch('/api/export-ccd', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
+                // 'X-CSRFToken': csrfToken
             },
             body: JSON.stringify(exportData)
         })
