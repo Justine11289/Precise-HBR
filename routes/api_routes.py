@@ -6,6 +6,7 @@ from functools import wraps
 import logging
 
 # 導入你原本的計算邏輯與設定
+from services import precise_hbr_calculator, risk_classifier
 import services.fhir_data_service as fhir_data_service
 from services.app_config import Config
 
@@ -14,57 +15,78 @@ api_bp = Blueprint('api', __name__)
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        # 檢查 session 中是否有 SMART 授權狀態
+        # 1. 支援 Keycloak 傳送的 Header 驗證
+        auth_header = request.headers.get('Authorization')
+        if auth_header and auth_header.startswith('Bearer '):
+            # 這裡之後會串接 Keycloak 的 token 驗證邏輯
+            return f(*args, **kwargs)
+            
+        # 2. 保留原有的 Session 檢查供沙盒環境使用
         if 'fhir_state' not in session:
-            return jsonify({'error': 'Unauthorized: No SMART state found in session'}), 401
+            return jsonify({'error': 'Unauthorized'}), 401
         return f(*args, **kwargs)
     return decorated_function
 
 @api_bp.route('/api/calculate_risk', methods=['POST'])
 @login_required
 def calculate_risk_api():
-    """
-    從沙盒抓取真實資料並計算 PRECISE-HBR 風險評分
-    """
+    # 1. 🚀 初始化變數，防止 UnboundLocalError
+    patient_data = {} 
+    patient_info = {'patient_id': session.get('patient_id'), 'name': 'N/A', 'age': 'N/A', 'gender': 'N/A'}
+    
     try:
-        # 1. 從 Session 恢復 SMART Client
-        smart = client.FHIRClient(state=session.get('fhir_state'))
-        server = smart.server
-        patient_id = smart.patient_id
+        fhir_session_data = session.get('fhir_data')
+        patient_id = session.get('patient_id')
         
-        current_app.logger.info(f"Calculating risk for Patient: {patient_id}")
-
-        # 2. 從沙盒伺服器抓取必要的數據 (例如 Hemoglobin, WBC, eGFR)
-        # 這裡會使用你的 fhir_data_service 進行 API 調用
-        # 確保你的 service 能接受 smart.server 作為參數
+        # 🛡️ 檢查 Session 是否遺失
+        if not fhir_session_data or not patient_id:
+            return jsonify({
+                'status': 'error', 
+                'error': 'Missing Session (iss/patient_id). Please launch with ?iss= URL',
+                'patient_info': patient_info
+            }), 400
+        
+        # 2. 執行資料抓取
         try:
-            patient_data, error = fhir_data_service.get_fhir_data(
-                fhir_server_url=smart.server.base_uri,
-                access_token=smart.access_token,
-                patient_id=smart.patient_id,
-                client_id=current_app.config.get('CLIENT_ID')
+            data_tuple = fhir_data_service.get_fhir_data(
+                fhir_server_url=fhir_session_data.get('server'),
+                access_token=fhir_session_data.get('token'),
+                patient_id=patient_id,
+                client_id=fhir_session_data.get('client_id')
             )
-        except Exception as e:
-            current_app.logger.error(f"Failed to fetch data from Sandbox: {str(e)}")
-            return jsonify({'error': '無法從沙盒取得病人資料'}), 500
+            patient_data = data_tuple[0] if isinstance(data_tuple, tuple) else data_tuple
+        except Exception as fetch_err:
+            current_app.logger.error(f"Fetch Error: {str(fetch_err)}")
+            return jsonify({'status': 'error', 'error': f"FHIR Server connection failed: {str(fetch_err)}"}), 500
 
-        # 3. 執行 PRECISE-HBR 計算邏輯
-        # 假設你的 service 中有計算方法
-        risk_result = fhir_data_service.calculate_precise_hbr_score(patient_data)
+        # 3. 解析基本資料
+        demographics = fhir_data_service.get_patient_demographics(patient_data.get('patient'))
+        patient_info.update({
+            'name': demographics.get('name', 'N/A'),
+            'age': demographics.get('age', 'N/A'),
+            'gender': demographics.get('gender', 'N/A')
+        })
+        
+        # 4. 執行風險計算
+        components, total_score = precise_hbr_calculator.calculate_score(patient_data, demographics)
 
-        # 4. 回傳結果給前端
         return jsonify({
             'status': 'success',
-            'patient_id': smart.patient_id,
-            'score': risk_result.get('total_score'),
-            'risk_level': risk_result.get('risk_level'),
-            'recommendations': risk_result.get('recommendations'),
-            'data_points': patient_data 
+            'patient_info': patient_info,
+            'score': total_score,
+            'risk_level': risk_classifier.get_risk_category_info(total_score)['category'],
+            'score_components': components
         })
 
     except Exception as e:
-        current_app.logger.error(f"API Error: {str(e)}")
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f"Critical API Error: {str(e)}")
+        return jsonify({
+            'status': 'error',
+            'error': str(e),
+            'patient_info': patient_info,
+            'score_components': []
+        }), 500
+
 
 @api_bp.route('/api/patient_info', methods=['GET'])
 @login_required

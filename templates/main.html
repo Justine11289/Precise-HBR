@@ -620,87 +620,60 @@
         document.getElementById('loading-container').classList.remove('d-none');
         document.getElementById('results-container').classList.add('d-none');
         document.getElementById('error-container').classList.add('d-none');
-
         try {
-            // const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             const response = await fetch('/api/calculate_risk', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                    // 'X-CSRFToken': csrfToken
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ patientId: patientId })
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-            }
             const data = await response.json();
-            displayResults(data);
+            console.log(">>> 成功從 API 取得資料:", data); 
+
+            // 3. 確保資料狀態是 success 才渲染
+            if (data.status === 'success') {
+                displayResults(data);
+            } else {
+                // 🛡️ 關鍵修正：使用從後端傳回的 data.patient_info 而非未定義的變數
+                if (data.patient_info) {
+                    renderBasicPatientInfo(data.patient_info);
+                }
+                throw new Error(data.error || "計算風險時發生未知錯誤");
+            }
         } catch (error) {
             console.error('Error fetching risk data:', error);
             displayError(error.message);
         }
     }
+    function renderBasicPatientInfo(info) {
+        if (!info) return;
+        
+        // 定位 DOM 元素並渲染
+        const idEl = document.getElementById('patient-id');
+        const nameEl = document.getElementById('patient-name');
+        const ageEl = document.getElementById('patient-age');
+        const genderEl = document.getElementById('patient-gender');
+
+        if (idEl) idEl.textContent = info.patient_id || info.id || 'N/A';
+        if (nameEl) nameEl.textContent = info.name || 'N/A';
+        if (ageEl) ageEl.textContent = info.age !== null && info.age !== undefined ? info.age : 'N/A';
+        if (genderEl) genderEl.textContent = info.gender || 'N/A';
+        
+        // 即使計算失敗，也顯示已載入的病人資訊區塊
+        document.getElementById('loading-container').classList.add('d-none');
+        document.getElementById('results-container').classList.remove('d-none');
+    }
 
     function displayResults(data) {
         currentPatientData = data;
-        scoreComponentData = data.score_components; // Store for recalculation
+        // 確保組件資料永遠是陣列
+        scoreComponentData = data.score_components || []; 
 
-        // Check for required data completeness
-        const requiredParameters = ['Age', 'Hemoglobin', 'eGFR', 'White Blood Cell'];
-        const missingCriticalData = [];
+        // 呼叫渲染函式
+        renderBasicPatientInfo(data.patient_info);
 
-        scoreComponentData.forEach(item => {
-            const paramName = item.parameter || '';
-            requiredParameters.forEach(required => {
-                if (paramName.includes(required)) {
-                    const isMissing = item.value === 'Not available' ||
-                        item.value === 'N/A' ||
-                        (item.raw_value === null && item.is_present === null);
-                    if (isMissing) {
-                        missingCriticalData.push(required);
-                    }
-                }
-            });
-        });
-
-        // Hide loading, show results (even if data is missing)
-        document.getElementById('loading-container').classList.add('d-none');
-        document.getElementById('results-container').classList.remove('d-none');
-
-        // Store missing data info for later use
-        window.initialMissingCriticalData = missingCriticalData;
-
-        // Patient Info
-        console.log('Patient info data:', data.patient_info); // Debug log
-        const patientId = data.patient_info.patient_id ||
-            data.patient_info.id ||
-            sessionStorage.getItem('current_patient_id') ||
-            'N/A';
-
-        // Only update if we have a valid patient ID and it's different from current content
-        const patientIdEl = document.getElementById('patient-id');
-        if (patientId && patientId !== 'N/A' && patientIdEl.textContent.trim() !== patientId) {
-            patientIdEl.textContent = patientId;
-            // Ensure the badge styling is maintained
-            if (!patientIdEl.classList.contains('bg-primary')) {
-                patientIdEl.classList.add('badge', 'bg-primary', 'text-white');
-            }
-        }
-        document.getElementById('patient-name').textContent = data.patient_info.name || 'N/A';
-        document.getElementById('patient-age').textContent = data.patient_info.age !== null ? data.patient_info.age : 'N/A';
-        document.getElementById('patient-gender').textContent = data.patient_info.gender || 'N/A';
-
-        // Render the interactive table for the first time
+        // 渲染剩餘的 UI 組件
         renderInteractiveTable();
-
-        // Show CCD export button after results are loaded
-        document.getElementById('exportCcdBtn').classList.remove('d-none');
-
-        // Perform the initial calculation and UI update
         recalculateAndRefreshUI();
     }
 

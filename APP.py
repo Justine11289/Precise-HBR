@@ -15,6 +15,8 @@ from routes.api_routes import api_bp
 from routes.tradeoff_routes import tradeoff_bp
 from routes.hooks import hooks_bp
 
+
+
 def create_app():
     app = Flask(__name__)
     # 確保 secret_key 存在以啟用 Session
@@ -28,18 +30,33 @@ def create_app():
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_DOMAIN=None,    # 讓瀏覽器自動決定
         SESSION_REFRESH_EACH_REQUEST=True, # 強制每次請求都更新 Cookie 狀態
-        PERMANENT_SESSION_LIFETIME=datetime.timedelta(minutes=3)
+        PERMANENT_SESSION_LIFETIME=datetime.timedelta(minutes=30)
     )
 
     @app.before_request
     def make_session_permanent():
-        # 只有在 launch 時才強制開啟 session，其他時候讓它自然過期
+        # 只要進入 launch，就確保 Session 是持久的，直到瀏覽器關閉或超時
         if request.path == '/launch':
             session.permanent = True
-        else:
-            # 讓瀏覽器關閉後自動清除 Session
-            session.permanent = False
+        # 移除原本的 else: session.permanent = False，避免在 callback 階段失效
+
+    @app.after_request
+    def add_security_headers(response):
+        response.headers.pop('X-Frame-Options', None)
+        origin = request.headers.get('Origin')
+        if origin in ['http://localhost:4013', 'http://localhost:8180']:
+            response.headers['Access-Control-Allow-Origin'] = origin
+            response.headers['Access-Control-Allow-Credentials'] = 'true'
+            response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-CSRFToken'
+        
+        # 3. 解決 Cross-Origin 跳轉問題
+        response.headers['Cross-Origin-Opener-Policy'] = 'unsafe-none' # 改為 unsafe-none 更有利於 OAuth2 跳轉
+        response.headers['Cross-Origin-Resource-Policy'] = 'cross-origin'
+        
+        return response
     
+
     # 初始化套件
     limiter.init_app(app)
     # 註解掉 Flask-Session 以使用原生的穩定 Cookie Session

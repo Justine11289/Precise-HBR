@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0"></script>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <style>
         body {
@@ -481,7 +480,7 @@
         </div>
     </div>
 
-    <script nonce="{{ csp_nonce() }}">
+    <script>
         let tradeoffChart;
         let modelData;
 
@@ -573,13 +572,11 @@
                     throw new Error("Patient ID is not available.");
                 }
 
-                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
                 const response = await fetch('/api/calculate_tradeoff', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRFToken': csrfToken
                     },
                     body: JSON.stringify({ patientId: patientId }),
                 });
@@ -641,49 +638,55 @@
 
         function populateFactorLists() {
             const allFactorsList = document.getElementById('all-factors');
+            if (!allFactorsList) return;
 
-            // Create a map to combine factors that appear in both lists
+            // 1. 🛡️ 使用 Optional Chaining (?.) 與空陣列防護 (|| [])
+            // 這確保了就算 modelData.model 沒抓到，變數也會是 [] 而不是 undefined
+            const bleedingPredictors = modelData?.model?.bleedingEvents?.predictors || [];
+            const thromboticPredictors = modelData?.model?.thromboticEvents?.predictors || [];
+
+            // 2. 增加防禦性檢查：如果連基本的數據都沒有，顯示提示訊息
+            if (bleedingPredictors.length === 0 && thromboticPredictors.length === 0) {
+                console.warn("收到的模型資料結構不完整:", modelData);
+                allFactorsList.innerHTML = '<li class="list-group-item text-muted">暫無模型因子資料</li>';
+                return;
+            }
+
             const factorMap = new Map();
 
-            // Process bleeding factors
-            modelData.model.bleedingEvents.predictors.forEach(p => {
-                if (!factorMap.has(p.factor)) {
-                    factorMap.set(p.factor, {
-                        factor: p.factor,
-                        description: p.description,
-                        bleeding: { hr: p.hazardRatio, ci: p.confidenceInterval },
-                        thrombotic: null
-                    });
-                } else {
-                    const existing = factorMap.get(p.factor);
-                    existing.bleeding = { hr: p.hazardRatio, ci: p.confidenceInterval };
-                }
+            // 3. 安全執行 forEach
+            bleedingPredictors.forEach(p => {
+                if (!p.factor) return;
+                factorMap.set(p.factor, {
+                    factor: p.factor,
+                    description: p.description || p.factor,
+                    bleeding: { hr: p.hazardRatio, ci: p.confidenceInterval },
+                    thrombotic: null
+                });
             });
 
-            // Process thrombotic factors
-            modelData.model.thromboticEvents.predictors.forEach(p => {
+            thromboticPredictors.forEach(p => {
+                if (!p.factor) return;
                 if (!factorMap.has(p.factor)) {
                     factorMap.set(p.factor, {
                         factor: p.factor,
-                        description: p.description,
+                        description: p.description || p.factor,
                         bleeding: null,
                         thrombotic: { hr: p.hazardRatio, ci: p.confidenceInterval }
                     });
                 } else {
-                    const existing = factorMap.get(p.factor);
-                    existing.thrombotic = { hr: p.hazardRatio, ci: p.confidenceInterval };
+                    factorMap.get(p.factor).thrombotic = { hr: p.hazardRatio, ci: p.confidenceInterval };
                 }
             });
 
-            // Sort factors: first show factors affecting both risks, then single risk factors
+            // 4. 清空清單並渲染
+            allFactorsList.innerHTML = '';
             const sortedFactors = Array.from(factorMap.values()).sort((a, b) => {
                 const aBoth = (a.bleeding && a.thrombotic) ? 1 : 0;
                 const bBoth = (b.bleeding && b.thrombotic) ? 1 : 0;
-                if (aBoth !== bBoth) return bBoth - aBoth; // Both risks first
-                return a.description.localeCompare(b.description); // Then alphabetically
+                return bBoth - aBoth || a.description.localeCompare(b.description);
             });
 
-            // Create checkboxes for all factors
             sortedFactors.forEach(factorData => {
                 allFactorsList.appendChild(createFactorCheckbox(factorData));
             });
@@ -691,40 +694,28 @@
 
         function createFactorCheckbox(factorData) {
             const li = document.createElement('li');
-            li.className = 'list-group-item';
-            const isChecked = modelData.detected_factors[factorData.factor] ? 'checked' : '';
-
-            // Create badges based on which risks are affected
-            let badges = '';
-            let hrInfo = '';
-
-            if (factorData.bleeding && factorData.thrombotic) {
-                badges = '<span class="badge bg-danger me-1">Bleeding</span><span class="badge bg-primary">Thrombotic</span>';
-                hrInfo = `<small class="d-block mt-1 text-muted">
-                    Bleeding HR: ${factorData.bleeding.hr} | Thrombotic HR: ${factorData.thrombotic.hr}
-                </small>`;
-            } else if (factorData.bleeding) {
-                badges = '<span class="badge bg-danger">Bleeding</span>';
-                hrInfo = `<small class="d-block mt-1 text-muted">HR: ${factorData.bleeding.hr}</small>`;
-            } else if (factorData.thrombotic) {
-                badges = '<span class="badge bg-primary">Thrombotic</span>';
-                hrInfo = `<small class="d-block mt-1 text-muted">HR: ${factorData.thrombotic.hr}</small>`;
-            }
+            li.className = 'list-group-item d-flex justify-content-between align-items-center';
+            
+            // 檢查該因子是否在後端偵測到的清單中
+            const isChecked = modelData?.detected_factors?.[factorData.factor] === true;
 
             li.innerHTML = `
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="${factorData.factor}" 
-                           id="check-${factorData.factor}" ${isChecked}>
-                    <label class="form-check-label w-100" for="check-${factorData.factor}">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <span>${factorData.description}</span>
-                            <span>${badges}</span>
-                        </div>
-                        ${hrInfo}
+                    <input class="form-check-input factor-checkbox" type="checkbox" 
+                        value="${factorData.factor}" id="chk-${factorData.factor}"
+                        ${isChecked ? 'checked' : ''}>
+                    <label class="form-check-label" for="chk-${factorData.factor}">
+                        ${factorData.description}
                     </label>
-                </div>`;
+                </div>
+                <div>
+                    ${factorData.bleeding ? '<span class="badge bg-danger me-1">B</span>' : ''}
+                    ${factorData.thrombotic ? '<span class="badge bg-primary">T</span>' : ''}
+                </div>
+            `;
             return li;
         }
+
 
         async function recalculateScores() {
             const activeFactors = {};
@@ -732,13 +723,11 @@
                 if (input.checked) activeFactors[input.value] = true;
             });
 
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
             const response = await fetch('/api/calculate_tradeoff', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken
                 },
                 body: JSON.stringify({ active_factors: activeFactors })
             });

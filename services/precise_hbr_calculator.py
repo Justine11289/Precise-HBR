@@ -520,6 +520,9 @@ precise_hbr_calculator = PreciseHBRCalculator()
 # Legacy function for backward compatibility
 def calculate_precise_hbr_score(raw_data, demographics):
     """Legacy function - calls the new calculator service"""
+    logging.info(f"DEBUG: 進入計算機的原始資料項: {list(raw_data.keys())}")
+    if 'observations' in raw_data:
+        logging.info(f"DEBUG: 觀測值數量: {len(raw_data['observations'])}")
     return precise_hbr_calculator.calculate_score(raw_data, demographics)
 
 
