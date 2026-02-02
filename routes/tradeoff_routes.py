@@ -13,6 +13,8 @@ tradeoff_bp = Blueprint('tradeoff', __name__, template_folder='templates')
 def tradeoff_analysis_page():
     """Renders the Tradeoff Analysis UI."""
     patient_id = session.get('patient_id', 'N/A')
+    if not patient_id:
+        return redirect(url_for('auth.launch', iss=session.get('fhir_data', {}).get('server')))
     return render_template('tradeoff_analysis.html', patient_id=patient_id)
 
 @tradeoff_bp.route('/api/calculate_tradeoff', methods=['POST'])

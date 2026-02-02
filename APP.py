@@ -27,6 +27,7 @@ def create_app():
         SESSION_COOKIE_NAME='fhir_app_session',
         SESSION_COOKIE_SAMESITE='Lax', 
         SESSION_COOKIE_SECURE=False,   # HTTP 環境必須為 False
+        SESSION_PERMANENT=True,
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_DOMAIN=None,    # 讓瀏覽器自動決定
         SESSION_REFRESH_EACH_REQUEST=True, # 強制每次請求都更新 Cookie 狀態
