@@ -143,7 +143,7 @@ class TestLaunchEndpoint:
     
     def test_launch_with_valid_iss_redirects(self, client):
         """Test launch with valid ISS redirects to auth."""
-        with patch('APP.requests.get') as mock_get:
+        with patch('routes.auth_routes.requests.get') as mock_get:
             mock_response = Mock()
             mock_response.json.return_value = {
                 'authorization_endpoint': 'https://auth.example.com/authorize',
@@ -216,7 +216,7 @@ class TestCalculateRiskAPI:
     
     def test_calculate_risk_with_valid_data(self, authenticated_client):
         """Test calculate risk with valid patient ID."""
-        with patch('APP.fhir_data_service.get_fhir_data') as mock_get:
+        with patch('routes.api_routes.fhir_data_service.get_fhir_data') as mock_get:
             with patch('APP.fhir_data_service.get_patient_demographics') as mock_demo:
                 with patch('APP.fhir_data_service.calculate_precise_hbr_score') as mock_calc:
                     with patch('APP.fhir_data_service.get_precise_hbr_display_info') as mock_info:
@@ -312,7 +312,7 @@ class TestExchangeCodeAPI:
                     'code_verifier': 'test-verifier'
                 }
             
-            with patch('APP.requests.post') as mock_post:
+            with patch('routes.auth_routes.requests.post') as mock_post:
                 mock_response = Mock()
                 mock_response.json.return_value = {
                     'access_token': 'test-token',
@@ -345,7 +345,7 @@ class TestMainPage:
     
     def test_main_with_auth_returns_200(self, authenticated_client):
         """Test main page with authentication returns 200."""
-        with patch('APP.fhir_data_service.get_fhir_data') as mock_get:
+        with patch('routes.api_routes.fhir_data_service.get_fhir_data') as mock_get:
             with patch('APP.fhir_data_service.get_patient_demographics') as mock_demo:
                 mock_get.return_value = ({
                     'patient': {'id': 'test', 'name': [{'text': 'Test'}]}
@@ -493,7 +493,7 @@ class TestAuditLogging:
     
     def test_api_calls_are_logged(self, authenticated_client):
         """Test that API calls trigger audit logging."""
-        with patch('APP.fhir_data_service.get_fhir_data') as mock_get:
+        with patch('routes.api_routes.fhir_data_service.get_fhir_data') as mock_get:
             with patch('APP.fhir_data_service.get_patient_demographics') as mock_demo:
                 with patch('APP.fhir_data_service.calculate_precise_hbr_score') as mock_calc:
                     with patch('APP.fhir_data_service.get_precise_hbr_display_info') as mock_info:
