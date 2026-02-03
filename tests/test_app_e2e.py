@@ -217,7 +217,7 @@ class TestCalculateRiskAPI:
     def test_calculate_risk_with_valid_data(self, authenticated_client):
         """Test calculate risk with valid patient ID."""
         with patch('routes.api_routes.fhir_data_service.get_fhir_data') as mock_get:
-            with patch('APP.fhir_data_service.get_patient_demographics') as mock_demo:
+            with patch('routes.api_routes.fhir_data_service.get_patient_demographics') as mock_demo:
                 with patch('APP.fhir_data_service.calculate_precise_hbr_score') as mock_calc:
                     with patch('APP.fhir_data_service.get_precise_hbr_display_info') as mock_info:
                         mock_get.return_value = ({
@@ -262,7 +262,7 @@ class TestExportCCDAPI:
     
     def test_export_ccd_with_valid_data(self, authenticated_client):
         """Test CCD export with valid risk data."""
-        with patch('APP.generate_ccd_from_session_data') as mock_gen:
+        with patch('routes.api_routes.fhir_data_service.generate_ccd') as mock_gen:
             mock_gen.return_value = '<?xml version="1.0"?><CCD></CCD>'
             
             response = authenticated_client.post(
@@ -346,7 +346,7 @@ class TestMainPage:
     def test_main_with_auth_returns_200(self, authenticated_client):
         """Test main page with authentication returns 200."""
         with patch('routes.api_routes.fhir_data_service.get_fhir_data') as mock_get:
-            with patch('APP.fhir_data_service.get_patient_demographics') as mock_demo:
+            with patch('routes.api_routes.fhir_data_service.get_patient_demographics') as mock_demo:
                 mock_get.return_value = ({
                     'patient': {'id': 'test', 'name': [{'text': 'Test'}]}
                 }, None)
@@ -494,7 +494,7 @@ class TestAuditLogging:
     def test_api_calls_are_logged(self, authenticated_client):
         """Test that API calls trigger audit logging."""
         with patch('routes.api_routes.fhir_data_service.get_fhir_data') as mock_get:
-            with patch('APP.fhir_data_service.get_patient_demographics') as mock_demo:
+            with patch('routes.api_routes.fhir_data_service.get_patient_demographics') as mock_demo:
                 with patch('APP.fhir_data_service.calculate_precise_hbr_score') as mock_calc:
                     with patch('APP.fhir_data_service.get_precise_hbr_display_info') as mock_info:
                         mock_get.return_value = ({'patient': {'id': 'test'}}, None)
