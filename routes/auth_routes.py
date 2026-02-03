@@ -4,6 +4,7 @@ from fhirclient import client
 import requests
 import uuid
 
+
 auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/launch')

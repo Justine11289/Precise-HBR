@@ -10,7 +10,7 @@ import pytest
 from unittest.mock import Mock, patch, MagicMock
 from flask import session
 
-from auth import (
+from routes.auth_routes import (
     generate_pkce_parameters,
     validate_pkce_parameters,
     get_smart_config,

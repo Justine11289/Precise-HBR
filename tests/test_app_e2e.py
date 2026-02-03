@@ -262,7 +262,7 @@ class TestExportCCDAPI:
     
     def test_export_ccd_with_valid_data(self, authenticated_client):
         """Test CCD export with valid risk data."""
-        with patch('routes.api_routes.fhir_data_service.generate_ccd') as mock_gen:
+        with patch('services.ccd_generator.generate_ccd') as mock_gen:
             mock_gen.return_value = '<?xml version="1.0"?><CCD></CCD>'
             
             response = authenticated_client.post(
