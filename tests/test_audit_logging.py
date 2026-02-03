@@ -9,7 +9,7 @@ import os
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-import audit_logger
+from services import audit_logger
 
 
 def test_audit_logger_initialization():

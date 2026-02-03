@@ -218,7 +218,7 @@ class TestCalculateRiskAPI:
         """Test calculate risk with valid patient ID."""
         with patch('routes.api_routes.fhir_data_service.get_fhir_data') as mock_get:
             with patch('routes.api_routes.fhir_data_service.get_patient_demographics') as mock_demo:
-                with patch('APP.fhir_data_service.calculate_precise_hbr_score') as mock_calc:
+                with patch('routes.api_routes.precise_hbr_calculator.calculate_score')  as mock_calc:
                     with patch('APP.fhir_data_service.get_precise_hbr_display_info') as mock_info:
                         mock_get.return_value = ({
                             'patient': {'id': 'patient-123', 'name': [{'text': 'Test Patient'}]}
@@ -495,7 +495,7 @@ class TestAuditLogging:
         """Test that API calls trigger audit logging."""
         with patch('routes.api_routes.fhir_data_service.get_fhir_data') as mock_get:
             with patch('routes.api_routes.fhir_data_service.get_patient_demographics') as mock_demo:
-                with patch('APP.fhir_data_service.calculate_precise_hbr_score') as mock_calc:
+                with patch('routes.api_routes.precise_hbr_calculator.calculate_score')  as mock_calc:
                     with patch('APP.fhir_data_service.get_precise_hbr_display_info') as mock_info:
                         mock_get.return_value = ({'patient': {'id': 'test'}}, None)
                         mock_demo.return_value = {'name': 'Test', 'age': 70}
