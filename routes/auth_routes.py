@@ -123,4 +123,4 @@ def callback():
 @auth_bp.route('/logout')
 def logout():
     session.clear()
-    return "已登出，請重新從沙盒啟動。"
+    return redirect(url_for('web.index'))

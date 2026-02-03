@@ -34,16 +34,15 @@ def client(app):
 
 @pytest.fixture
 def authenticated_client(app):
-    """Create an authenticated test client with valid session."""
     with app.test_client() as client:
         with client.session_transaction() as sess:
+            sess['fhir_state'] = {'api_base': 'http://localhost:8080', 'patient': 'test-123'}
+            sess['patient_id'] = 'test-123'
             sess['fhir_data'] = {
-                'server': 'https://fhir.example.com',
-                'token': 'test-access-token',
-                'client_id': 'test-client-id',
-                'patient': 'patient-123'
+                'server': 'http://localhost:8080',
+                'token': 'test-token',
+                'client_id': 'precise-hbr-app'
             }
-            sess['patient_id'] = 'patient-123'
         yield client
 
 

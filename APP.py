@@ -57,6 +57,15 @@ def create_app():
         
         return response
     
+    @app.route('/health')
+    def health():
+        return jsonify({
+            "status": "healthy",
+            "timestamp": datetime.datetime.now().isoformat(),
+            "service": "precise-hbr",
+            "version": "1.0.0"
+        }), 200
+    
 
     # 初始化套件
     limiter.init_app(app)
